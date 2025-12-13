@@ -92,7 +92,13 @@ export default function CandidatesPage() {
     }
 
     if (statusFilter !== "all") {
-      filtered = filtered.filter(c => c.status === statusFilter)
+      if (statusFilter === "invited") {
+        filtered = filtered.filter(c => c.invited_at !== null)
+      } else if (statusFilter === "not_sent") {
+        filtered = filtered.filter(c => c.invited_at === null)
+      } else {
+        filtered = filtered.filter(c => c.status === statusFilter)
+      }
     }
 
     setFilteredCandidates(filtered)
@@ -363,9 +369,11 @@ export default function CandidatesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="invited">Invited</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="approved">Approved</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="not_sent">Not sent</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" size="icon" onClick={fetchCandidates}>
@@ -482,7 +490,7 @@ export default function CandidatesPage() {
       {/* Add/Edit Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md border-0 shadow-2xl">
+          <Card className="w-full max-w-md bg-white dark:bg-zinc-900 border shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>{editingCandidate ? 'Edit Candidate' : 'Add New Candidate'}</CardTitle>
@@ -552,7 +560,7 @@ export default function CandidatesPage() {
                   Cancel
                 </Button>
                 <Button 
-                  className="flex-1 bg-[#800000] hover:bg-[#600000]"
+                  className="flex-1 bg-[#800000] hover:bg-[#600000] text-white"
                   onClick={handleSaveCandidate}
                   disabled={saving || !formData.full_name || !formData.email}
                 >

@@ -292,7 +292,7 @@ export default function SettingsPage() {
                   </Button>
                   <Button 
                     onClick={() => openSubjectModal()}
-                    className="bg-[#800000] hover:bg-[#600000]"
+                    className="bg-[#800000] hover:bg-[#600000] text-white"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Subject
@@ -397,7 +397,7 @@ export default function SettingsPage() {
                   </Button>
                   <Button 
                     onClick={() => openDocModal()}
-                    className="bg-[#800000] hover:bg-[#600000]"
+                    className="bg-[#800000] hover:bg-[#600000] text-white"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Document
@@ -513,7 +513,7 @@ export default function SettingsPage() {
       {/* Subject Modal */}
       {showSubjectModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md border-0 shadow-2xl">
+          <Card className="w-full max-w-md bg-white dark:bg-zinc-900 border shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>{editingSubject ? 'Edit Subject' : 'Add New Subject'}</CardTitle>
@@ -580,7 +580,7 @@ export default function SettingsPage() {
                   Cancel
                 </Button>
                 <Button 
-                  className="flex-1 bg-[#800000] hover:bg-[#600000]"
+                  className="flex-1 bg-[#800000] hover:bg-[#600000] text-white"
                   onClick={handleSaveSubject}
                   disabled={saving || !subjectForm.code || !subjectForm.title}
                 >
@@ -605,7 +605,7 @@ export default function SettingsPage() {
       {/* Document Modal */}
       {showDocModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md border-0 shadow-2xl">
+          <Card className="w-full max-w-md bg-white dark:bg-zinc-900 border shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>{editingDoc ? 'Edit Document' : 'Add Required Document'}</CardTitle>
@@ -671,7 +671,7 @@ export default function SettingsPage() {
                   Cancel
                 </Button>
                 <Button 
-                  className="flex-1 bg-[#800000] hover:bg-[#600000]"
+                  className="flex-1 bg-[#800000] hover:bg-[#600000] text-white"
                   onClick={handleSaveDocument}
                   disabled={saving || !docForm.name}
                 >
