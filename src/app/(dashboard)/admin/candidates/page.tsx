@@ -35,7 +35,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { inviteCandidateAction } from "@/app/actions/invite-candidate"
 
 export default function CandidatesPage() {
   const [candidates, setCandidates] = useState<Candidate[]>([])
@@ -215,22 +214,28 @@ export default function CandidatesPage() {
     }
   }
 
-  // Send invitation (real)
+  // Send invitation via API
   const handleSendInvitation = async (candidate: Candidate) => {
-    if (!confirm(`Are you sure you want to send an invitation to ${candidate.email}? This will create a user account for them.`)) return
-
+    if (!confirm(`Send invitation email to ${candidate.email}?`)) return
+    
     try {
-      const result = await inviteCandidateAction(candidate.id, candidate.email, candidate.full_name)
-      
-      if (result.success) {
-        alert(`Invitation sent successfully to ${candidate.email}`)
-        fetchCandidates()
-      } else {
-        alert(`Failed to send invitation: ${result.error}`)
+      const response = await fetch('/api/admin/send-invitation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candidateId: candidate.id })
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to send invitation')
       }
+      
+      alert(`Invitation sent successfully to: ${candidate.email}`)
+      fetchCandidates()
     } catch (error: any) {
       console.error('Error sending invitation:', error)
-      alert('An unexpected error occurred')
+      alert(`Error sending invitation: ${error.message}`)
     }
   }
 
@@ -441,7 +446,7 @@ export default function CandidatesPage() {
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-xl rounded-xl z-[60] p-2">
+                          <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => openEditModal(candidate)}>
                               <Edit className="h-4 w-4 mr-2" /> Edit
                             </DropdownMenuItem>
@@ -476,9 +481,9 @@ export default function CandidatesPage() {
 
       {/* Add/Edit Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-200">
-          <Card className="w-full max-w-md border border-gray-200 dark:border-gray-800 shadow-2xl bg-white dark:bg-gray-900">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md border-0 shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>{editingCandidate ? 'Edit Candidate' : 'Add New Candidate'}</CardTitle>
                 <CardDescription>

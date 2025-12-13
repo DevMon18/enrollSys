@@ -80,7 +80,7 @@ export default function LoginPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold tracking-tight">EnrollSys</h1>
-              <p className="text-white/70 text-sm tracking-wider uppercase">Automating Enrollment Process</p>
+              <p className="text-white/70 text-sm tracking-wider uppercase">Campus Enrollment</p>
             </div>
           </div>
           

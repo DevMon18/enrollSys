@@ -315,8 +315,8 @@ export default function UsersPage() {
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-xl rounded-xl z-[60] p-2">
-                            <DropdownMenuItem onClick={() => openEditModal(user)} className="cursor-pointer rounded-lg focus:bg-gray-100 dark:focus:bg-gray-800">
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => openEditModal(user)}>
                               <Edit className="h-4 w-4 mr-2" /> Edit User
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -365,9 +365,9 @@ export default function UsersPage() {
 
       {/* Edit User Modal */}
       {showEditModal && editingUser && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-200">
-          <Card className="w-full max-w-md border border-gray-200 dark:border-gray-800 shadow-2xl bg-white dark:bg-gray-900">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md border-0 shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>Edit User</CardTitle>
                 <CardDescription>Update user information and role</CardDescription>

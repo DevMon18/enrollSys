@@ -103,3 +103,7 @@ alter table public.candidates enable row level security;
 
 drop policy if exists "Admins can manage candidates" on public.candidates;
 create policy "Admins can manage candidates" on public.candidates using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+-- INVITATION TOKEN COLUMNS (Run this to update existing table)
+-- ALTER TABLE public.candidates ADD COLUMN invitation_token text unique;
+-- ALTER TABLE public.candidates ADD COLUMN token_expires_at timestamp with time zone;

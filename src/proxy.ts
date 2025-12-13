@@ -1,7 +1,12 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export default async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
+    // Skip middleware for auth callback route (handles invitation tokens)
+    if (request.nextUrl.pathname.startsWith('/auth/callback')) {
+        return NextResponse.next()
+    }
+
     let response = NextResponse.next({
         request: {
             headers: request.headers,

@@ -512,9 +512,9 @@ export default function SettingsPage() {
 
       {/* Subject Modal */}
       {showSubjectModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-200">
-          <Card className="w-full max-w-md border border-gray-200 dark:border-gray-800 shadow-2xl bg-white dark:bg-gray-900">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md border-0 shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>{editingSubject ? 'Edit Subject' : 'Add New Subject'}</CardTitle>
                 <CardDescription>
@@ -604,9 +604,9 @@ export default function SettingsPage() {
 
       {/* Document Modal */}
       {showDocModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-200">
-          <Card className="w-full max-w-md border border-gray-200 dark:border-gray-800 shadow-2xl bg-white dark:bg-gray-900">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md border-0 shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>{editingDoc ? 'Edit Document' : 'Add Required Document'}</CardTitle>
                 <CardDescription>
