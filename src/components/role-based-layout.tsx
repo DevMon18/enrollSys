@@ -167,7 +167,9 @@ export function RoleBasedLayout({ children, sidebar }: { children: React.ReactNo
 
         {/* Page Content */}
         <div className="flex-1 p-6 lg:p-8 bg-gray-50/50 dark:bg-gray-950">
-          {children}
+          <div className="mx-auto max-w-[1600px] space-y-8">
+            {children}
+          </div>
         </div>
 
         {/* Footer */}
