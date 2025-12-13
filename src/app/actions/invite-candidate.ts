@@ -25,15 +25,22 @@ export async function inviteCandidateAction(candidateId: string, email: string, 
     })
 
     try {
+        // Determine the robust site URL
+        let siteUrl = process.env.NEXT_PUBLIC_SITE_URL ??
+            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+
+        // Ensure protocol
+        if (!siteUrl.startsWith('http')) {
+            siteUrl = `https://${siteUrl}`
+        }
+
         // 1. Send Invite Email (creates Auth User)
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
             data: {
                 full_name: fullName,
-                role: 'student' // This metadata can be used by triggers to set public.profile role
+                role: 'student'
             },
-            redirectTo: `${supabaseUrl.replace('.supabase.co', '.vercel.app')}/update-password` // Optional: redirect to a specific page
-            // Actually, standard setup usually redirects to the site URL.
-            // Let's rely on default or siteURL settings in Supabase dashboard.
+            redirectTo: `${siteUrl}/auth/callback?next=/update-password`
         })
 
         if (authError) {
