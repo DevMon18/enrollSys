@@ -40,7 +40,7 @@ export async function inviteCandidateAction(candidateId: string, email: string, 
                 full_name: fullName,
                 role: 'student'
             },
-            redirectTo: `${siteUrl}/auth/callback?next=/update-password`
+            redirectTo: `${siteUrl}/auth/callback?next=/registration`
         })
 
         if (authError) {
