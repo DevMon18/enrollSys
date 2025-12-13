@@ -366,7 +366,7 @@ export default function UsersPage() {
       {/* Edit User Modal */}
       {showEditModal && editingUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md border-0 shadow-2xl">
+          <Card className="w-full max-w-md bg-white dark:bg-zinc-900 border shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>Edit User</CardTitle>
@@ -433,7 +433,7 @@ export default function UsersPage() {
                   Cancel
                 </Button>
                 <Button 
-                  className="flex-1 bg-[#800000] hover:bg-[#600000]"
+                  className="flex-1 bg-[#800000] hover:bg-[#600000] text-white"
                   onClick={handleUpdateUser}
                   disabled={saving}
                 >
