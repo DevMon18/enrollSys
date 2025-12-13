@@ -43,9 +43,8 @@ export default function UpdatePasswordPage() {
 
       if (error) throw error
 
-      alert("Password updated successfully! Redirecting to dashboard...")
-      router.push("/") // Redirect to root (which redirects to role dashboard)
-      router.refresh()
+      alert("Registration successful! Redirecting to login...")
+      router.push("/login") 
     } catch (err: any) {
       setError(err.message || "Failed to update password")
     } finally {
@@ -63,10 +62,10 @@ export default function UpdatePasswordPage() {
              </div>
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-            Set Your Password
+            Complete Registration
           </CardTitle>
           <CardDescription>
-            Create a secure password to activate your account
+            Create a password to finish setting up your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -78,13 +77,13 @@ export default function UpdatePasswordPage() {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">Create Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter new password"
+                  placeholder="Enter your new password"
                   className="pl-10"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -111,7 +110,7 @@ export default function UpdatePasswordPage() {
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="Confirm new password"
+                  placeholder="Re-enter your password"
                   className="pl-10"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -128,10 +127,10 @@ export default function UpdatePasswordPage() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  Completing Registration...
                 </>
               ) : (
-                "Set Password & Login"
+                "Complete Registration"
               )}
             </Button>
           </form>
