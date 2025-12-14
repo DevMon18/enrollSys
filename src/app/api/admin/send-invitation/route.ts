@@ -113,17 +113,26 @@ export async function POST(request: NextRequest) {
 
         if (emailError) {
             console.error('Email error:', emailError)
-            return NextResponse.json({ error: 'Failed to send email', details: emailError }, { status: 500 })
+            // Return success with warning so admin can copy link manually
+            return NextResponse.json({
+                success: true,
+                message: 'Invitation generated but email failed to send (Test Mode limits?)',
+                emailSent: false,
+                activationUrl,
+                details: emailError
+            })
         }
 
         return NextResponse.json({
             success: true,
             message: 'Invitation sent successfully',
+            emailSent: true,
+            activationUrl, // Always return it just in case
             emailId: emailData?.id
         })
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Server error:', error)
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+        return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 })
     }
 }

@@ -234,12 +234,20 @@ export default function CandidatesPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        // If details exist (e.g. Resend error), show them
-        const message = result.details?.message || result.error || 'Failed to send invitation'
-        throw new Error(message)
+        throw new Error(result.error || result.details?.message || 'Failed to send invitation')
+      }
+
+      if (result.emailSent) {
+        alert(`Invitation sent successfully to: ${candidate.email}`)
+      } else {
+        // Fallback for Resend limits
+        const copy = confirm(`Email could not be delivered (Resend limit). Copy manual link?\n\n${result.activationUrl}`)
+        if (copy) {
+          navigator.clipboard.writeText(result.activationUrl)
+          alert('Link copied to clipboard!')
+        }
       }
       
-      alert(`Invitation sent successfully to: ${candidate.email}`)
       fetchCandidates()
     } catch (error: any) {
       console.error('Error sending invitation:', error)
