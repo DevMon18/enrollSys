@@ -35,6 +35,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Copy } from "lucide-react"
 
 export default function CandidatesPage() {
   const [candidates, setCandidates] = useState<Candidate[]>([])
@@ -52,6 +63,13 @@ export default function CandidatesPage() {
   })
   const [formError, setFormError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [inviteDialog, setInviteDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    activationUrl?: string; 
+    isError?: boolean;
+  }>({ open: false, title: "", description: "" })
 
   const fetchCandidates = useCallback(async () => {
     const supabase = createClient()
@@ -238,21 +256,32 @@ export default function CandidatesPage() {
       }
 
       if (result.emailSent) {
-        alert(`Invitation sent successfully to: ${candidate.email}`)
+        setInviteDialog({
+          open: true,
+          title: "Invitation Sent",
+          description: `Invitation sent successfully to: ${candidate.email}`
+        })
       } else {
         // Fallback for email failure
         const reason = result.details?.message || 'Configuration missing or network error'
-        const copy = confirm(`Email could not be delivered:\n"${reason}"\n\nCopy manual invitation link instead?\n\n${result.activationUrl}`)
-        if (copy) {
-          navigator.clipboard.writeText(result.activationUrl)
-          alert('Link copied to clipboard!')
-        }
+        setInviteDialog({
+          open: true,
+          title: "Email Delivery Failed",
+          description: `The email/server returned: "${reason}".\n\nYou can manually copy the invitation link below and send it to the candidate.`,
+          activationUrl: result.activationUrl,
+          isError: true
+        })
       }
       
       fetchCandidates()
     } catch (error: any) {
       console.error('Error sending invitation:', error)
-      alert(`Error sending invitation: ${error.message}`)
+      setInviteDialog({
+        open: true,
+        title: "Error Sending Invitation",
+        description: error.message,
+        isError: true
+      })
     }
   }
 
@@ -592,6 +621,43 @@ export default function CandidatesPage() {
           </Card>
         </div>
       )}
+      {/* Invitation Result Dialog */}
+      <AlertDialog open={inviteDialog.open} onOpenChange={(open) => setInviteDialog(prev => ({ ...prev, open }))}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className={inviteDialog.isError ? "text-red-600" : "text-emerald-600"}>
+              {inviteDialog.title}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="whitespace-pre-wrap">
+              {inviteDialog.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          {inviteDialog.activationUrl && (
+            <div className="flex items-center gap-2 p-2 bg-muted rounded-md border mt-2">
+              <code className="text-xs flex-1 break-all p-1">{inviteDialog.activationUrl}</code>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  navigator.clipboard.writeText(inviteDialog.activationUrl!)
+                  // Could add a toast here, but for now just visual feedback
+                }}
+                className="h-8 w-8"
+                title="Copy to clipboard"
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setInviteDialog(prev => ({ ...prev, open: false }))}>
+              Close
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
