@@ -49,7 +49,14 @@ export async function POST(request: NextRequest) {
         }
 
         // Build activation URL
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+        let baseUrl = process.env.NEXT_PUBLIC_APP_URL
+        if (!baseUrl) {
+            if (process.env.VERCEL_URL) {
+                baseUrl = `https://${process.env.VERCEL_URL}`
+            } else {
+                baseUrl = 'http://localhost:3000'
+            }
+        }
         const activationUrl = `${baseUrl}/activate?token=${token}`
 
         // Send email using Resend
