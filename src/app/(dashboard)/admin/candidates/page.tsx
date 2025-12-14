@@ -240,8 +240,9 @@ export default function CandidatesPage() {
       if (result.emailSent) {
         alert(`Invitation sent successfully to: ${candidate.email}`)
       } else {
-        // Fallback for Resend limits
-        const copy = confirm(`Email could not be delivered (Resend limit). Copy manual link?\n\n${result.activationUrl}`)
+        // Fallback for email failure
+        const reason = result.details?.message || 'Configuration missing or network error'
+        const copy = confirm(`Email could not be delivered:\n"${reason}"\n\nCopy manual invitation link instead?\n\n${result.activationUrl}`)
         if (copy) {
           navigator.clipboard.writeText(result.activationUrl)
           alert('Link copied to clipboard!')
