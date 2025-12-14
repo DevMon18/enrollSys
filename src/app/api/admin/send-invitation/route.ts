@@ -12,6 +12,15 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: NextRequest) {
     try {
+        if (!process.env.RESEND_API_KEY) {
+            console.error('Missing RESEND_API_KEY')
+            return NextResponse.json({ error: 'Server configuration error: Missing RESEND_API_KEY' }, { status: 500 })
+        }
+        if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            console.error('Missing SUPABASE_SERVICE_ROLE_KEY')
+            return NextResponse.json({ error: 'Server configuration error: Missing SUPABASE_SERVICE_ROLE_KEY' }, { status: 500 })
+        }
+
         const { candidateId } = await request.json()
 
         if (!candidateId) {
