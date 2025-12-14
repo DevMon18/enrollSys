@@ -79,33 +79,22 @@ function RegisterContent() {
         setSubmitting(true)
 
         try {
-            // Create Supabase Auth user
-            const { data: authData, error: authError } = await supabase.auth.signUp({
-                email: candidate.email,
-                password: formData.password,
-                options: {
-                    data: {
-                        full_name: candidate.full_name,
-                        role: 'student'
-                    }
-                }
+            const response = await fetch('/api/auth/complete-registration', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    token,
+                    password: formData.password
+                })
             })
 
-            if (authError) throw authError
+            const result = await response.json()
 
-            if (authData.user) {
-                // Clear the invitation token so it can't be reused
-                await supabase
-                    .from('candidates')
-                    .update({ 
-                        invitation_token: null,
-                        token_expires_at: null,
-                        status: 'approved'
-                    })
-                    .eq('id', candidate.id)
-
-                setSuccess(true)
+            if (!response.ok) {
+                throw new Error(result.error || 'Registration failed')
             }
+
+            setSuccess(true)
         } catch (err: any) {
             setError(err.message || 'Registration failed')
         } finally {
