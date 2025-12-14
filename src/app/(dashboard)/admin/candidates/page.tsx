@@ -234,7 +234,9 @@ export default function CandidatesPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to send invitation')
+        // If details exist (e.g. Resend error), show them
+        const message = result.details?.message || result.error || 'Failed to send invitation'
+        throw new Error(message)
       }
       
       alert(`Invitation sent successfully to: ${candidate.email}`)
