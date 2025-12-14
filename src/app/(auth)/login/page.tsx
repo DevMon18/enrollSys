@@ -5,24 +5,29 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { GraduationCap, Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react"
+import { GraduationCap, Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createBrowserClient } from '@supabase/ssr'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [errorDialog, setErrorDialog] = useState<{ open: boolean; message: string }>({ open: false, message: "" })
   const router = useRouter()
   
   const supabase = createBrowserClient(
@@ -33,7 +38,19 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
+
+    // Basic validation
+    if (!email.trim()) {
+      setErrorDialog({ open: true, message: "Please enter your email address." })
+      setLoading(false)
+      return
+    }
+
+    if (!password) {
+      setErrorDialog({ open: true, message: "Please enter your password." })
+      setLoading(false)
+      return
+    }
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -57,7 +74,15 @@ export default function LoginPage() {
          router.push(`/${role}`)
       }
     } catch (err: any) {
-      setError(err.message)
+      let message = "An unexpected error occurred. Please try again."
+      if (err.message.includes("Invalid login")) {
+        message = "Invalid email or password. Please check your credentials."
+      } else if (err.message.includes("Email not confirmed")) {
+        message = "Please verify your email before logging in."
+      } else {
+        message = err.message
+      }
+      setErrorDialog({ open: true, message })
     } finally {
       setLoading(false)
     }
@@ -111,38 +136,33 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-[#fcfcfc] dark:bg-gray-950">
+      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[#800000] to-[#a00000] flex items-center justify-center shadow-lg">
               <GraduationCap className="h-7 w-7 text-white" />
             </div>
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">EnrollSys</span>
+            <span className="text-2xl font-bold text-gray-900">EnrollSys</span>
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Welcome back</h2>
-            <p className="text-gray-500 dark:text-gray-400">Sign in to access your portal</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome back</h2>
+            <p className="text-gray-500">Sign in to access your portal</p>
           </div>
 
-          <Card className="border-0 shadow-xl bg-white dark:bg-gray-900">
+          <Card className="border-0 shadow-xl bg-white">
             <CardContent className="p-8 space-y-6">
               <form onSubmit={handleLogin} className="space-y-6">
-                {error && (
-                    <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-md text-sm">
-                        {error}
-                    </div>
-                )}
                 <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium">Email Address</Label>
+                    <Label htmlFor="email" className="text-gray-700 font-medium">Email Address</Label>
                     <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                         id="email"
                         type="email"
                         placeholder="you@campus.edu"
-                        className="pl-12 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-[#800000] focus:ring-[#800000]/20 text-base"
+                        className="pl-12 h-12 bg-gray-50 border-gray-200 focus:border-[#800000] focus:ring-[#800000]/20 text-base"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -152,7 +172,7 @@ export default function LoginPage() {
                 
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-gray-700 dark:text-gray-300 font-medium">Password</Label>
+                    <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
                     <Link href="#" className="text-sm text-[#800000] hover:underline font-medium">
                         Forgot password?
                     </Link>
@@ -162,7 +182,7 @@ export default function LoginPage() {
                     <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
-                        className="pl-12 pr-12 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-[#800000] focus:ring-[#800000]/20 text-base"
+                        className="pl-12 pr-12 h-12 bg-gray-50 border-gray-200 focus:border-[#800000] focus:ring-[#800000]/20 text-base"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -185,14 +205,14 @@ export default function LoginPage() {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                  <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white dark:bg-gray-900 px-3 text-gray-500">Need help?</span>
+                  <span className="bg-white px-3 text-gray-500">Need help?</span>
                 </div>
               </div>
 
-              <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-center text-sm text-gray-500">
                 Contact the Registrar's Office for account assistance
               </p>
             </CardContent>
@@ -203,6 +223,26 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+
+      {/* Error Dialog */}
+      <AlertDialog open={errorDialog.open} onOpenChange={(open) => setErrorDialog(prev => ({ ...prev, open }))}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertCircle className="h-5 w-5" />
+              Login Failed
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {errorDialog.message}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorDialog({ open: false, message: "" })}>
+              Try Again
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

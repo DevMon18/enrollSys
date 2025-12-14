@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, GraduationCap, Eye, EyeOff, CheckCircle } from "lucide-react"
-import Link from "next/link"
 
 function RegisterContent() {
     const searchParams = useSearchParams()
@@ -107,21 +106,28 @@ function RegisterContent() {
     }
 
     if (success) {
+        // Sign out any existing session to prevent admin redirect
+        const handleGoToLogin = async () => {
+            await supabase.auth.signOut()
+            router.push('/login')
+        }
+
         return (
             <Card className="w-full max-w-md shadow-xl">
                 <CardContent className="pt-8 text-center space-y-6">
                     <div className="h-20 w-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
                         <CheckCircle className="h-12 w-12 text-green-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Registration Complete!</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">Registration Complete!</h2>
                     <p className="text-gray-500">
                         Your account has been created successfully. You can now log in to access your student portal.
                     </p>
-                    <Link href="/login">
-                        <Button className="w-full bg-[#800000] hover:bg-[#700000] text-white">
-                            Go to Login
-                        </Button>
-                    </Link>
+                    <Button 
+                        onClick={handleGoToLogin}
+                        className="w-full bg-[#800000] hover:bg-[#700000] text-white"
+                    >
+                        Go to Login
+                    </Button>
                 </CardContent>
             </Card>
         )
@@ -137,11 +143,11 @@ function RegisterContent() {
                 <CardDescription>Set up your password to finish account creation</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-gray-600">
                         <strong>Name:</strong> {candidate?.full_name}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-600">
                         <strong>Email:</strong> {candidate?.email}
                     </p>
                 </div>
@@ -208,7 +214,7 @@ function RegisterContent() {
 
 export default function RegisterPage() {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-4">
             <Suspense fallback={
                 <div className="flex items-center justify-center">
                     <Loader2 className="h-12 w-12 animate-spin text-[#800000]" />
